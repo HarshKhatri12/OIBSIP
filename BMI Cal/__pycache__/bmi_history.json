@@ -1,0 +1,32 @@
+[
+    {
+        "date": "2026-06-24T15:15:07.412018",
+        "heightCm": 180,
+        "weightKg": 52.0,
+        "age": 21,
+        "gender": "male",
+        "activity": 1.375,
+        "targetWeight": 65.0,
+        "notes": ""
+    },
+    {
+        "date": "2026-06-24T15:15:12.187423",
+        "heightCm": 180,
+        "weightKg": 52.0,
+        "age": 21,
+        "gender": "male",
+        "activity": 1.375,
+        "targetWeight": 65.0,
+        "notes": ""
+    },
+    {
+        "date": "2026-06-24T15:21:10.885329",
+        "heightCm": 175,
+        "weightKg": 70.0,
+        "age": 28,
+        "gender": "male",
+        "activity": 1.375,
+        "targetWeight": null,
+        "notes": ""
+    }
+]

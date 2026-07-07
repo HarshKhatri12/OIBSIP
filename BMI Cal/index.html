@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitScale™ - Premium BMI & Health Dashboard</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Calculate your BMI, track weight history, map your stats on a 2D health nomogram, and get personalized calorie and health insights with FitScale.">
+  <meta name="keywords" content="BMI Calculator, Body Mass Index, Weight Tracker, BMR Calculator, TDEE, Health Chart, Nomogram">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dark-theme">
+  <!-- Background Decorative Blurs -->
+  <div class="bg-blur bg-blur-1"></div>
+  <div class="bg-blur bg-blur-2"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <i data-lucide="scale"></i>
+        </div>
+        <div>
+          <h1>FitScale<span class="accent-dot">.</span></h1>
+          <p class="subtitle">Advanced Body Mass & Health Analytics</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark/Light Mode">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        <button id="load-sample-btn" class="btn-secondary btn-small">
+          <i data-lucide="database"></i> Load Sample Data
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="dashboard-grid">
+      
+      <!-- Column 1: Calculator Panel -->
+      <section class="card calculator-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <i data-lucide="calculator" class="title-icon"></i>
+            <h2>New Calculation</h2>
+          </div>
+          <!-- Unit Selector Tabs -->
+          <div class="unit-tabs">
+            <button type="button" class="unit-tab active" data-unit="metric">Metric (cm/kg)</button>
+            <button type="button" class="unit-tab" data-unit="imperial">Imperial (in/lb)</button>
+          </div>
+        </div>
+
+        <form id="bmi-form" class="calculator-form">
+          <!-- Gender Select -->
+          <div class="form-group">
+            <label>Gender</label>
+            <div class="gender-selection">
+              <label class="gender-label">
+                <input type="radio" name="gender" value="male" checked>
+                <span class="gender-button">
+                  <i data-lucide="mars"></i> Male
+                </span>
+              </label>
+              <label class="gender-label">
+                <input type="radio" name="gender" value="female">
+                <span class="gender-button">
+                  <i data-lucide="venus"></i> Female
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Height Input (Dynamic based on unit selection) -->
+          <div class="form-group" id="metric-height-group">
+            <div class="label-row">
+              <label for="height-cm">Height</label>
+              <span class="input-val-badge" id="height-cm-val">175 cm</span>
+            </div>
+            <div class="range-container">
+              <input type="range" id="height-cm" min="100" max="250" value="175" class="slider">
+              <input type="number" id="height-cm-num" min="100" max="250" value="175" class="num-input">
+            </div>
+          </div>
+
+          <div class="form-group hidden" id="imperial-height-group">
+            <label>Height</label>
+            <div class="imperial-height-fields">
+              <div class="field-with-label">
+                <input type="number" id="height-ft" min="3" max="8" value="5" class="num-input">
+                <span class="field-label">ft</span>
+              </div>
+              <div class="field-with-label">
+                <input type="number" id="height-in" min="0" max="11" value="9" class="num-input">
+                <span class="field-label">in</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weight Input -->
+          <div class="form-group" id="metric-weight-group">
+            <div class="label-row">
+              <label for="weight-kg">Weight</label>
+              <span class="input-val-badge" id="weight-kg-val">70 kg</span>
+            </div>
+            <div class="range-container">
+              <input type="range" id="weight-kg" min="20" max="250" value="70" step="0.5" class="slider">
+              <input type="number" id="weight-kg-num" min="20" max="250" value="70" step="0.1" class="num-input">
+            </div>
+          </div>
+
+          <div class="form-group hidden" id="imperial-weight-group">
+            <div class="label-row">
+              <label for="weight-lb">Weight</label>
+              <span class="input-val-badge" id="weight-lb-val">154 lbs</span>
+            </div>
+            <div class="range-container">
+              <input type="range" id="weight-lb" min="40" max="550" value="154" step="1" class="slider">
+              <input type="number" id="weight-lb-num" min="40" max="550" value="154.3" step="0.1" class="num-input">
+            </div>
+          </div>
+
+          <!-- Age & Activity Level Grid -->
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="age">Age (years)</label>
+              <input type="number" id="age" min="2" max="120" value="28" class="num-input width-full">
+            </div>
+            <div class="form-group">
+              <label for="activity">Activity Level</label>
+              <select id="activity" class="select-input width-full">
+                <option value="1.2">Sedentary (Little/no exercise)</option>
+                <option value="1.375" selected>Lightly Active (1-3 days/wk)</option>
+                <option value="1.55">Moderately Active (3-5 days/wk)</option>
+                <option value="1.725">Very Active (6-7 days/wk)</option>
+                <option value="1.9">Extra Active (Hard training/job)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Goal Weight (Optional) -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="target-weight">Weight Goal (Optional)</label>
+              <span class="input-val-badge badge-neutral" id="target-weight-badge">None</span>
+            </div>
+            <div class="target-weight-input-group">
+              <input type="number" id="target-weight" placeholder="e.g. 68" step="0.1" class="num-input">
+              <span class="unit-indicator" id="target-weight-unit">kg</span>
+              <button type="button" id="clear-target-btn" class="btn-clear" title="Clear Goal">
+                <i data-lucide="x"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button type="submit" id="calculate-btn" class="btn-primary">
+              <i data-lucide="arrow-right"></i> Calculate BMI
+            </button>
+            <button type="button" id="save-log-btn" class="btn-secondary">
+              <i data-lucide="plus"></i> Save to Log
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Column 2: Dashboard Results & Visual Gauge -->
+      <section class="card results-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <i data-lucide="activity" class="title-icon"></i>
+            <h2>Health Status</h2>
+          </div>
+        </div>
+
+        <div class="results-layout">
+          <!-- Circular Gauge Container -->
+          <div class="gauge-section">
+            <div class="gauge-container">
+              <svg class="gauge-svg" viewBox="0 0 100 60">
+                <!-- Gauge Background Arc -->
+                <path class="gauge-track" d="M10,50 A40,40 0 0,1 90,50" />
+                <!-- Gauge Value Arc -->
+                <path id="gauge-fill" class="gauge-fill val-normal" d="M10,50 A40,40 0 0,1 90,50" />
+                <!-- Needle Indicator Line -->
+                <line id="gauge-needle" x1="50" y1="50" x2="50" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="transform-origin: 50px 50px; transform: rotate(-90deg); transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
+                <!-- Center Indicator Marker -->
+                <circle id="gauge-pin" cx="50" cy="50" r="2.5" fill="currentColor" />
+              </svg>
+              <div class="gauge-text-container">
+                <span class="bmi-value" id="bmi-display">22.9</span>
+                <span class="bmi-label text-normal" id="bmi-category-display">Normal</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BMI Color Legend Band -->
+          <div class="legend-band">
+            <div class="legend-item val-underweight"><span>&lt; 18.5</span><small>Under</small></div>
+            <div class="legend-item val-normal"><span>18.5 - 24.9</span><small>Normal</small></div>
+            <div class="legend-item val-overweight"><span>25.0 - 29.9</span><small>Over</small></div>
+            <div class="legend-item val-obese"><span>&ge; 30.0</span><small>Obese</small></div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="metrics-grid">
+            <!-- Metric Card 1: Health Rating / Target Delta -->
+            <div class="metric-mini-card">
+              <div class="mini-card-head">
+                <i data-lucide="sparkles" class="text-accent"></i>
+                <span>Weight Target</span>
+              </div>
+              <div class="mini-card-val" id="target-status-val">- -</div>
+              <div class="mini-card-sub" id="target-status-sub">Set a goal weight</div>
+            </div>
+
+            <!-- Metric Card 2: Ideal Range -->
+            <div class="metric-mini-card">
+              <div class="mini-card-head">
+                <i data-lucide="heart" class="text-normal-ui"></i>
+                <span>Ideal Weight Range</span>
+              </div>
+              <div class="mini-card-val" id="ideal-range-val">56.7 - 76.3 kg</div>
+              <div class="mini-card-sub">For height: <span id="ideal-range-height">175 cm</span></div>
+            </div>
+
+            <!-- Metric Card 3: BMR -->
+            <div class="metric-mini-card">
+              <div class="mini-card-head">
+                <i data-lucide="flame" class="text-overweight-ui"></i>
+                <span>BMR (Energy at Rest)</span>
+              </div>
+              <div class="mini-card-val" id="bmr-val">1,624 kcal</div>
+              <div class="mini-card-sub">Calories burned resting daily</div>
+            </div>
+
+            <!-- Metric Card 4: TDEE (Maintenance) -->
+            <div class="metric-mini-card">
+              <div class="mini-card-head">
+                <i data-lucide="zap" class="text-obese-ui"></i>
+                <span>TDEE (Maintenance)</span>
+              </div>
+              <div class="mini-card-val" id="tdee-val">2,233 kcal</div>
+              <div class="mini-card-sub">Calories to maintain weight</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row 2: Charts Panel (Takes full width on desktop) -->
+      <section class="card charts-card">
+        <div class="card-header border-bottom-none">
+          <div class="card-title-group">
+            <i data-lucide="bar-chart-3" class="title-icon"></i>
+            <h2>Interactive Analytics</h2>
+          </div>
+          <!-- Chart Tabs Toggle -->
+          <div class="chart-tabs">
+            <button type="button" class="chart-tab active" data-chart="nomogram">
+              <i data-lucide="grid"></i> BMI Zone Map
+            </button>
+            <button type="button" class="chart-tab" data-chart="trend">
+              <i data-lucide="trending-up"></i> Weight History
+            </button>
+          </div>
+        </div>
+
+        <div class="chart-container-wrapper">
+          <!-- Nomogram Scatter Chart -->
+          <div id="nomogram-container" class="chart-view">
+            <div class="chart-aspect-ratio">
+              <canvas id="nomogramChart"></canvas>
+            </div>
+            <div class="chart-caption">
+              <p>This 2D Nomogram plots your Height vs. Weight. Shaded areas correspond to standard WHO classifications. A pulsing marker represents your current parameters.</p>
+            </div>
+          </div>
+
+          <!-- Trend Line Chart -->
+          <div id="trend-container" class="chart-view hidden">
+            <div class="chart-aspect-ratio">
+              <canvas id="trendChart"></canvas>
+            </div>
+            <div class="chart-caption">
+              <p>Tracks your logged Weight and BMI over time. The dotted line shows your weight target (if set).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row 3: Insights & History Log -->
+      <section class="card insights-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <i data-lucide="brain" class="title-icon"></i>
+            <h2>Personalized Insights</h2>
+          </div>
+        </div>
+        <div class="insights-content" id="insights-text">
+          <div class="insight-item">
+            <div class="insight-bullet bullet-normal"></div>
+            <div>
+              <strong>Normal BMI Category:</strong> Your current body mass index is <strong>22.9</strong>, which falls in the healthy weight range. Maintaining a balanced diet and regular exercise is recommended.
+            </div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-bullet bullet-info"></div>
+            <div>
+              <strong>Caloric Recommendation:</strong> To maintain your current weight of <strong>70.0 kg</strong>, aim for approximately <strong>2,233 kcal</strong> per day.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Log Table Card -->
+      <section class="card history-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <i data-lucide="history" class="title-icon"></i>
+            <h2>Log History</h2>
+          </div>
+          <div class="history-actions">
+            <button id="export-json-btn" class="btn-outline btn-small" title="Export to JSON">
+              <i data-lucide="download"></i> Export
+            </button>
+            <button id="import-trigger-btn" class="btn-outline btn-small" title="Import from JSON">
+              <i data-lucide="upload"></i> Import
+            </button>
+            <input type="file" id="import-file" class="hidden" accept=".json">
+            <button id="clear-all-btn" class="btn-danger btn-small" title="Clear all history">
+              <i data-lucide="trash-2"></i> Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="table-scroll-container">
+          <table class="history-table" id="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Height</th>
+                <th>Weight</th>
+                <th>BMI</th>
+                <th>Category</th>
+                <th>Age/Gender</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="history-body">
+              <!-- Log list dynamically generated -->
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">No data logged yet. Save a calculation to start tracking.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2026 FitScale Dashboard. Built for wellness tracking. Consult a healthcare provider for medical diagnostics.</p>
+    </footer>
+  </div>
+
+  <!-- Script File -->
+  <script src="app.js"></script>
+</body>
+</html>
