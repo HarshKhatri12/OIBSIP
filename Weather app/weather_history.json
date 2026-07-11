@@ -1,0 +1,30 @@
+[
+  {
+    "location": "Jaipur, Rajasthan, India",
+    "temp": "34°C",
+    "desc": "Haze",
+    "icon": "🌫️",
+    "timestamp": "10 Jul 2026 16:47"
+  },
+  {
+    "location": "Goelli, Rajasthan, India",
+    "temp": "36°C",
+    "desc": "Sunny",
+    "icon": "☀️",
+    "timestamp": "10 Jul 2026 16:46"
+  },
+  {
+    "location": "Parlia Rajpura, Rajasthan, India",
+    "temp": "33°C",
+    "desc": "Partly Cloudy ",
+    "icon": "⛅",
+    "timestamp": "10 Jul 2026 16:46"
+  },
+  {
+    "location": "Sirohi, Rajasthan, India",
+    "temp": "36°C",
+    "desc": "Sunny",
+    "icon": "☀️",
+    "timestamp": "10 Jul 2026 16:44"
+  }
+]
